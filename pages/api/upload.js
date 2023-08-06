@@ -1,20 +1,20 @@
 import multiparty from 'multiparty';
-import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import fs from 'fs';
 import mime from 'mime-types';
-import {mongooseConnect} from "@/lib/mongoose";
-import {isAdminRequest} from "@/pages/api/auth/[...nextauth]";
-const bucketName = 'dawid-next-ecommerce';
+import { mongooseConnect } from "@/lib/mongoose";
+import { isAdminRequest } from "@/pages/api/auth/[...nextauth]";
+const bucketName = 'yildirim-ecommerce-next';
 
-export default async function handle(req,res) {
+export default async function handle(req, res) {
   await mongooseConnect();
-  await isAdminRequest(req,res);
+  await isAdminRequest(req, res);
 
   const form = new multiparty.Form();
-  const {fields,files} = await new Promise((resolve,reject) => {
+  const { fields, files } = await new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) reject(err);
-      resolve({fields,files});
+      resolve({ fields, files });
     });
   });
   console.log('length:', files.file.length);
@@ -39,9 +39,9 @@ export default async function handle(req,res) {
     const link = `https://${bucketName}.s3.amazonaws.com/${newFilename}`;
     links.push(link);
   }
-  return res.json({links});
+  return res.json({ links });
 }
 
 export const config = {
-  api: {bodyParser: false},
+  api: { bodyParser: false },
 };
